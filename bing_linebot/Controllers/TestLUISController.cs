@@ -1,3 +1,6 @@
+using bingshopLibrary.Models;
+using bingshopLibrary.Repositories;
+using bingshopLibrary.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,9 +48,50 @@ namespace bing_linebot.Controllers
                             repmsg = $"你說了 '{LineEvent.message.text}' ，但不在我的服務範圍內喔!";
                         else
                         {
-                            repmsg = $"OK，你想 '{ret.TopScoringIntent.Name}'，";
-                            if (ret.Entities.Count > 0)
-                                repmsg += $"想要的是 '{ ret.Entities.FirstOrDefault().Value.FirstOrDefault().Value}' ";
+                            if(ret.TopScoringIntent.Name == "訂單查詢")
+                            {
+                                var Service = new service();
+                                var Order = Service.OrderGetAll();                          
+                                var Total = Order.Count();
+                               
+                                repmsg = $"OK，{ret.TopScoringIntent.Name}: + {Total.ToString()} + 筆";
+                                repmsg += Total.ToString();
+                            }
+                            if (ret.TopScoringIntent.Name == "金額查詢")
+                            {
+                                var Service = new service();
+                                var Order_Details = Service.Order_DetailsGetAll();
+
+                                var Total = Order_Details.Count();
+
+                                repmsg = $"OK，{ret.TopScoringIntent.Name}: + {Total.ToString()} + 筆";
+                                repmsg += Total.ToString();
+                            }
+                            if (ret.TopScoringIntent.Name == "商品查詢")
+                            {
+                                var Service = new service();
+                                var Products = Service.ProductsGetAll();
+                                var Total = Products.Count();
+
+                                repmsg = $"OK，{ret.TopScoringIntent.Name}: + {Total.ToString()} + 筆";
+                                repmsg += Total.ToString();
+                            }
+                            if (ret.TopScoringIntent.Name == "庫存查詢")
+                            {
+                                var Service = new service();
+                                var Products = Service.ProductsGetAll();
+                                var Total = 0;
+                                foreach (var item in Products)
+                                {
+                                    Total += item.UnitsInStock;
+                                }
+                               
+
+                                repmsg = $"OK，{ret.TopScoringIntent.Name}: + {Total.ToString()} + 筆";
+                                repmsg += Total.ToString();
+                            }
+                         
+
                         }
                         //回覆
                         this.ReplyMessage(LineEvent.replyToken, repmsg);

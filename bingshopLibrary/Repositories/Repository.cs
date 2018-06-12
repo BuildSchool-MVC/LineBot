@@ -21,5 +21,11 @@ namespace bingshopLibrary.Repositories
         {
             return _context.Set<T>().AsQueryable();
         }
+
+
+        public void FindById(T entity)
+        {
+            _context.Entry(entity).State = System.Data.Entity.EntityState.Modified;
+        }
     }
 }
