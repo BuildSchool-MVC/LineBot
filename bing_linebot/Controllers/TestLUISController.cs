@@ -48,50 +48,78 @@ namespace bing_linebot.Controllers
                             repmsg = $"你說了 '{LineEvent.message.text}' ，但不在我的服務範圍內喔!";
                         else
                         {
-                            if(ret.TopScoringIntent.Name == "訂單查詢")
+                          /*  var EntityList = new List<string>();
+
+                            foreach (var item in ret.Entities) 
                             {
+                                EntityList.Add(item.Value[0].Name);
+                            }*/
+
+                            /* if (ret.Entities.Count > 0)
+                                 repmsg += $"'{ ret.Entities.FirstOrDefault().Value.FirstOrDefault().Value}' ";*/
+
+                            
+                             if (ret.TopScoringIntent.Name == "訂單查詢")
+                             {
+                                 var Service = new service();
+                                 var Order = Service.OrderGetAll();                          
+                                 var Total = Order.Count();
+
+                                 repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 筆";
+                             }
+                             if (ret.TopScoringIntent.Name == "金額查詢")
+                             {
+
                                 var Service = new service();
-                                var Order = Service.OrderGetAll();                          
-                                var Total = Order.Count();
-                               
-                                repmsg = $"OK，{ret.TopScoringIntent.Name}: + {Total.ToString()} + 筆";
-                                repmsg += Total.ToString();
-                            }
-                            if (ret.TopScoringIntent.Name == "金額查詢")
-                            {
-                                var Service = new service();
-                                var Order_Details = Service.Order_DetailsGetAll();
+                                 var Order_Details = Service.Order_DetailsGetAll();
+                                 var Products = Service.ProductsGetAll();                                
+                                 decimal Total = 0;
+                                 foreach(var itemO in Order_Details)
+                                 {
+                                     foreach(var itemP in Products)
+                                     {
+                                         if(itemO.ProductID == itemP.ProductID)
+                                         {
+                                             Total += itemO.Quantity * itemP.UnitPrice;
+                                         }
+                                     }
+                                 }
 
-                                var Total = Order_Details.Count();
+                                 repmsg = $"OK，{ret.TopScoringIntent.Name}: {Decimal.Round(Total).ToString()} 元";
 
-                                repmsg = $"OK，{ret.TopScoringIntent.Name}: + {Total.ToString()} + 筆";
-                                repmsg += Total.ToString();
-                            }
-                            if (ret.TopScoringIntent.Name == "商品查詢")
-                            {
-                                var Service = new service();
-                                var Products = Service.ProductsGetAll();
-                                var Total = Products.Count();
+                             }
+                             if (ret.TopScoringIntent.Name == "商品查詢")
+                             {
+                                 var Service = new service();
+                                 var Products = Service.ProductsGetAll();
+                                 var Total = Products.Count();
 
-                                repmsg = $"OK，{ret.TopScoringIntent.Name}: + {Total.ToString()} + 筆";
-                                repmsg += Total.ToString();
-                            }
-                            if (ret.TopScoringIntent.Name == "庫存查詢")
-                            {
-                                var Service = new service();
-                                var Products = Service.ProductsGetAll();
-                                var Total = 0;
-                                foreach (var item in Products)
-                                {
-                                    Total += item.UnitsInStock;
-                                }
-                               
+                                 repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 筆";
 
-                                repmsg = $"OK，{ret.TopScoringIntent.Name}: + {Total.ToString()} + 筆";
-                                repmsg += Total.ToString();
-                            }
-                         
+                             }
+                             if (ret.TopScoringIntent.Name == "庫存查詢")
+                             {
+                                 var Service = new service();
+                                 var Products = Service.ProductsGetAll();
+                                 var Total = 0;
+                                 foreach (var item in Products)
+                                 {
+                                     Total += item.UnitsInStock;
+                                 }
 
+                                 repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 個";
+
+                             }
+                             if (ret.TopScoringIntent.Name == "客戶查詢")
+                             {
+                                 var Service = new service();
+                                 var Customers = Service.CustomerGetAll();
+                                 var Total = Customers.Count();
+
+                                 repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 位";
+
+                             }
+                             
                         }
                         //回覆
                         this.ReplyMessage(LineEvent.replyToken, repmsg);

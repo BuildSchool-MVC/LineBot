@@ -67,7 +67,5 @@ namespace bingshopLibrary.Service
 
             return repository.GetAll().ToList();
         }
-
-
     }
 }
