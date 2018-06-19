@@ -21,5 +21,6 @@ namespace bingshopLibrary.Repositories
         {
             return _context.Set<T>().AsQueryable();
         }
+
     }
 }

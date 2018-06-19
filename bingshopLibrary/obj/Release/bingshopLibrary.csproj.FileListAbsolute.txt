@@ -1,0 +1,13 @@
+D:\buildschool-MVC\LineBot\bingshopLibrary\bin\Release\bingshopLibrary.dll.config
+D:\buildschool-MVC\LineBot\bingshopLibrary\bin\Release\bingshopLibrary.dll
+D:\buildschool-MVC\LineBot\bingshopLibrary\bin\Release\bingshopLibrary.pdb
+D:\buildschool-MVC\LineBot\bingshopLibrary\bin\Release\EntityFramework.dll
+D:\buildschool-MVC\LineBot\bingshopLibrary\bin\Release\EntityFramework.SqlServer.dll
+D:\buildschool-MVC\LineBot\bingshopLibrary\bin\Release\EntityFramework.xml
+D:\buildschool-MVC\LineBot\bingshopLibrary\bin\Release\EntityFramework.SqlServer.xml
+D:\buildschool-MVC\LineBot\bingshopLibrary\bin\Release\zh-Hant\EntityFramework.resources.dll
+D:\buildschool-MVC\LineBot\bingshopLibrary\obj\Release\bingshopLibrary.csprojAssemblyReference.cache
+D:\buildschool-MVC\LineBot\bingshopLibrary\obj\Release\bingshopLibrary.csproj.CoreCompileInputs.cache
+D:\buildschool-MVC\LineBot\bingshopLibrary\obj\Release\bingshopLibrary.csproj.CopyComplete
+D:\buildschool-MVC\LineBot\bingshopLibrary\obj\Release\bingshopLibrary.dll
+D:\buildschool-MVC\LineBot\bingshopLibrary\obj\Release\bingshopLibrary.pdb
