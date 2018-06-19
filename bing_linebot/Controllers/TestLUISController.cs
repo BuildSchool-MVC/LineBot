@@ -48,25 +48,94 @@ namespace bing_linebot.Controllers
                             repmsg = $"你說了 '{LineEvent.message.text}' ，但不在我的服務範圍內喔!";
                         else
                         {
-                          /*  var EntityList = new List<string>();
+                            var EntityList = new List<string>();
 
                             foreach (var item in ret.Entities) 
                             {
                                 EntityList.Add(item.Value[0].Name);
+                            }
+
+                           /* foreach (var item in EntityList)
+                            {
+                                repmsg += item + "-";
                             }*/
 
-                            /* if (ret.Entities.Count > 0)
-                                 repmsg += $"'{ ret.Entities.FirstOrDefault().Value.FirstOrDefault().Value}' ";*/
-
-                            
                              if (ret.TopScoringIntent.Name == "訂單查詢")
                              {
-                                 var Service = new service();
-                                 var Order = Service.OrderGetAll();                          
-                                 var Total = Order.Count();
+                                var Service = new service();
+                                var Order = Service.OrderGetAll();
+                                var List = new List<string>();    
+                                if (ret.Entities.Count > 1)
+                                {
+                                    if (EntityList.Any((x) => x == "申請退貨"))
+                                    {
+                                        foreach (var item in Order)
+                                        {
+                                            if (item.Status == "申請退貨")
+                                            {
+                                                repmsg += item.OrderID;
+                                            }
+                                        }
+                                    }
+                                    if (EntityList.Any((x) => x == "訂單完成結案"))
+                                    {
+                                        foreach (var item in Order)
+                                        {
+                                            if (item.Status == "訂單完成結案")
+                                            {
+                                                repmsg += item.OrderID;
+                                            }
+                                        }
+                                    }
+                                    if (EntityList.Any((x) => x == "處理中"))
+                                    {
+                                        foreach (var item in Order)
+                                        {
+                                            if (item.Status == "處理中")
+                                            {
+                                                repmsg += item.OrderID;
+                                            }
+                                        }
+                                    }
+                                    if (EntityList.Any((x) => x == "已到貨"))
+                                    {
+                                        foreach (var item in Order)
+                                        {
+                                            if (item.Status == "已到貨")
+                                            {
+                                                repmsg += item.OrderID;
+                                            }
+                                        }
+                                    }
+                                    if (EntityList.Any((x) => x == "已出貨"))
+                                    {
+                                        foreach (var item in Order)
+                                        {
+                                            if (item.Status == "已出貨")
+                                            {
+                                                repmsg += item.OrderID;
+                                            }
+                                        }
+                                    }
+                                    if (EntityList.Any((x) => x == "申請取消"))
+                                    {
+                                        foreach (var item in Order)
+                                        {
+                                            if (item.Status == "申請取消")
+                                            {
+                                                repmsg += item.OrderID;
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    var Total = Order.Count();
+                                    repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 筆";
+                                }
+                               
 
-                                 repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 筆";
-                             }
+                            }
                              if (ret.TopScoringIntent.Name == "金額查詢")
                              {
 
@@ -92,9 +161,52 @@ namespace bing_linebot.Controllers
                              {
                                  var Service = new service();
                                  var Products = Service.ProductsGetAll();
+                                var Orderdetail = Service.Order_DetailsGetAll();
                                  var Total = Products.Count();
 
-                                 repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 筆";
+                                if (ret.Entities.Count > 1)
+                                {
+                                    var id = 0;
+                                    if (EntityList.Any((x) => x == "最好"))
+                                    {
+                                        var Product = Orderdetail.GroupBy((x) => x.ProductID).Select((y) => y.Sum((x) => x.Quantity)).Max();
+                                        var Productid = Orderdetail.GroupBy((x) => x.ProductID).Where((y) => y.Sum((x) => x.Quantity)== Product).Select((z)=>z.Select((x)=>x.ProductID));
+                                         foreach (var item in Productid)
+                                        {
+                                            foreach (var item_ in item)
+                                            {
+                                                id = item_;
+                                            }
+                                        }
+                                        var i = Products.Where((x) => x.ProductID == id).Select((y) => y.ProductName);
+                                        foreach(var item in i)
+                                        {
+                                            repmsg += item;
+                                        }
+                                    }
+                                    if (EntityList.Any((x) => x == "最差"))
+                                    {
+
+                                        var Product = Orderdetail.GroupBy((x) => x.ProductID).Select((y) => y.Sum((x) => x.Quantity)).Min();
+                                        var Productid = Orderdetail.GroupBy((x) => x.ProductID).Where((y) => y.Sum((x) => x.Quantity) == Product).Select((z) => z.Select((x) => x.ProductID));
+                                        foreach (var item in Productid)
+                                        {
+                                            foreach (var item_ in item)
+                                            {
+                                                id = item_;
+                                            }
+                                        }
+                                        var i = Products.Where((x) => x.ProductID == id).Select((y) => y.ProductName);
+                                        foreach (var item in i)
+                                        {
+                                            repmsg += item;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 筆";
+                                }
 
                              }
                              if (ret.TopScoringIntent.Name == "庫存查詢")
@@ -119,7 +231,6 @@ namespace bing_linebot.Controllers
                                  repmsg = $"OK，{ret.TopScoringIntent.Name}: {Total.ToString()} 位";
 
                              }
-                             
                         }
                         //回覆
                         this.ReplyMessage(LineEvent.replyToken, repmsg);
